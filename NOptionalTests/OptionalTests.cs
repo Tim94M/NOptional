@@ -220,10 +220,4 @@ namespace NOptional
     {
 
     }
-
-    class TestInterface : ITestInterface
-    {
-
-    }
-
 }
