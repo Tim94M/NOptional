@@ -201,5 +201,29 @@ namespace NOptional
 
             Assert.IsTrue(enumeratorOptional.HasValue());
         }
+
+        [TestMethod]
+        public void GivenCreatedWithIntThenHasValue()
+        {
+            var optional = Optional.Of(5);
+            Assert.IsTrue(optional.HasValue());
+        }
+
+        [TestMethod]
+        public void GivenCreatedWithNullInterfaceImplementationThenNotHasValue()
+        {
+            Assert.ThrowsException<ArgumentNullException>( () => Optional.Of<ITestInterface>(null));
+        }
     }
+
+    interface ITestInterface
+    {
+
+    }
+
+    class TestInterface : ITestInterface
+    {
+
+    }
+
 }
