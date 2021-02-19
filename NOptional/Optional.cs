@@ -43,6 +43,7 @@ namespace NOptional
         }
 
         public bool HasValue() => hasValue;
+        public bool IsEmpty() => !HasValue();
 
         public IOptional<T> Filter(Predicate<T> filter) => HasValue() && filter(Value) ? Optional.Of(Value) : Optional.Empty<T>();
 
@@ -71,6 +72,7 @@ namespace NOptional
 
         public IOptional<U> Map<U>(Func<T, U> mapper) => HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
         public IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper) => HasValue() ? mapper(Value) : Optional.Empty<U>();
+
 
     }
 }

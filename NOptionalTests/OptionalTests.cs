@@ -20,6 +20,7 @@ namespace NOptional
         {
             var filledOptional = Optional.Of(TestString);
             Assert.IsTrue(filledOptional.HasValue());
+            Assert.IsFalse(filledOptional.IsEmpty());
         }
 
         [TestMethod]
@@ -28,6 +29,7 @@ namespace NOptional
             var emptyOptional = Optional.OfNullable<string>(null);
 
             Assert.IsFalse(emptyOptional.HasValue());
+            Assert.IsTrue(emptyOptional.IsEmpty());
         }
 
         [TestMethod]
