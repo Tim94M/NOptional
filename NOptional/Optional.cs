@@ -67,6 +67,9 @@ namespace NOptional
 
         public void IfPresentOrElse(Action<T> presentAction, Action elseAction)
         {
+            CheckNullOrThrowException(presentAction);
+            CheckNullOrThrowException(elseAction);
+
             if (HasValue())
             {
                 presentAction(Value);
