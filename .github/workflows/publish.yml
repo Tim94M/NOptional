@@ -24,4 +24,4 @@ jobs:
       env:
         ApiKey: ${{ secrets.NUGETAPIKEY }}
         SourceUrl: "https://api.nuget.org/v3/index.json"
-      run: dotnet nuget push NOptional.1.0.0.nupkg "$GITHUB_WORKSPACE"/bin/Release --api-key "$ApiKey" --source "$SourceUrl" 
+      run: dotnet nuget push "$GITHUB_WORKSPACE"/bin/Release/NOptional.1.0.0.nupkg  --api-key "$ApiKey" --source "$SourceUrl" 
