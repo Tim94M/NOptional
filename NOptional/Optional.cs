@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace NOptional
 {
@@ -43,6 +45,7 @@ namespace NOptional
         }
 
         public bool HasValue() => hasValue;
+        public bool IsEmpty() => !HasValue();
 
         public IOptional<T> Filter(Predicate<T> filter) => HasValue() && filter(Value) ? Optional.Of(Value) : Optional.Empty<T>();
 
@@ -54,11 +57,36 @@ namespace NOptional
             }
         }
 
+        public void IfPresentOrElse(Action<T> presentAction, Action elseAction)
+        {
+            if (HasValue())
+            {
+                presentAction(Value);
+            }
+            else
+            {
+                elseAction();
+            }
+        }
+
+        public IOptional<T> Or(Func<IOptional<T>> elseGenerator) => HasValue() ? Optional.Of(Value) : elseGenerator();
+
         public T OrElse(T elseValue) => HasValue() ? Value : elseValue;
         public T OrElseGet(Func<T> elseGenerator) => HasValue() ? Value : elseGenerator();
+        public T OrElseThrow() => HasValue() ? Value : throw new InvalidOperationException("Could not retrieve value because value was not set");
         public T OrElseThrow(Func<Exception> exceptionGenerator) => HasValue() ? Value : throw exceptionGenerator();
 
         public IOptional<U> Map<U>(Func<T, U> mapper) => HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
         public IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper) => HasValue() ? mapper(Value) : Optional.Empty<U>();
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            if (HasValue())
+            {
+                yield return Value;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

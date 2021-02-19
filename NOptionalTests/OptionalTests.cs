@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 namespace NOptional
 {
@@ -20,6 +21,7 @@ namespace NOptional
         {
             var filledOptional = Optional.Of(TestString);
             Assert.IsTrue(filledOptional.HasValue());
+            Assert.IsFalse(filledOptional.IsEmpty());
         }
 
         [TestMethod]
@@ -28,6 +30,7 @@ namespace NOptional
             var emptyOptional = Optional.OfNullable<string>(null);
 
             Assert.IsFalse(emptyOptional.HasValue());
+            Assert.IsTrue(emptyOptional.IsEmpty());
         }
 
         [TestMethod]
@@ -213,6 +216,71 @@ namespace NOptional
         public void GivenCreatedWithNullInterfaceImplementationThenNotHasValue()
         {
             Assert.ThrowsException<ArgumentNullException>( () => Optional.Of<ITestInterface>(null));
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingIfPresentOrElseElseActionIsExecuted()
+        {
+            var optional = Optional.Empty<string>();
+            optional.IfPresentOrElse(s => Assert.Fail(), () => Assert.IsTrue(true));
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingIfPresentOrElseThenPresentActionIsExecuted()
+        {
+            var optional = Optional.Of(TestString);
+
+            optional.IfPresentOrElse(s => Assert.IsTrue(true), () => Assert.Fail());
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingOrThenOrIsExecuted()
+        {
+            var optional = Optional.Empty<string>();
+            var value = optional.Or(() => Optional.Of(TestString));
+
+            Assert.IsTrue(value.Filter(s => s.Equals(TestString)).HasValue());
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingOrThenOrIsExecuted()
+        {
+            var optional = Optional.Of(TestString);
+            var value = optional.Or(() =>
+            {
+                Assert.Fail();
+                return Optional.Empty<string>();
+            });
+
+            Assert.IsTrue(value.Filter(s => s.Equals(TestString)).HasValue());
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingOrElseThrowThenInvalidOperationExceptionIsThrown()
+        {
+            var optional = Optional.Empty<string>();
+            Assert.ThrowsException<InvalidOperationException>(() => optional.OrElseThrow());
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingOrElseThrowThenValuesAreEqual()
+        {
+            var optional = Optional.Of(TestString);
+            var value = optional.OrElseThrow();
+
+            Assert.AreEqual(TestString, value);
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingGetEnumerableThenContainsNoElements()
+        {
+            Assert.IsFalse(Optional.Empty<string>().Any());
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingGetEnumerableThenContainsOneElement()
+        {
+            Assert.IsTrue(Optional.Of(TestString).Any());
         }
     }
 
