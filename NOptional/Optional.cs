@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NOptional
 {
@@ -47,10 +48,17 @@ namespace NOptional
         public bool HasValue() => hasValue;
         public bool IsEmpty() => !HasValue();
 
-        public IOptional<T> Filter(Predicate<T> filter) => HasValue() && filter(Value) ? Optional.Of(Value) : Optional.Empty<T>();
+        public IOptional<T> Filter(Predicate<T> filter)
+        {
+            CheckNullOrThrowException(filter);
+
+            return HasValue() && filter(Value) ? Optional.Of(Value) : Optional.Empty<T>();
+        }
 
         public void IfPresent(Action<T> action)
         {
+            CheckNullOrThrowException(action);
+
             if (HasValue())
             {
                 action(Value);
@@ -88,6 +96,9 @@ namespace NOptional
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        private void CheckNullOrThrowException(object toCheck, [CallerMemberName] string parameterName = "") 
+            => _ = toCheck ?? throw new ArgumentNullException(parameterName);
 
         public override bool Equals(object obj)
         {
