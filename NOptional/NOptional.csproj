@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/Tim94M/NOptional/</PackageProjectUrl>
     <Description>Clone of Java's Optional type for .NET</Description>
     <Copyright>2021 Tim Moeller</Copyright>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
