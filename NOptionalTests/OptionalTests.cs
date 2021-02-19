@@ -385,6 +385,22 @@ namespace NOptional
 
             Assert.IsTrue(optional.GetHashCode() != optional2.GetHashCode());
         }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenComparedWithNullThenTheyAreNotEqual()
+        {
+            var optional = Optional.Empty<string>();
+
+            Assert.IsFalse(optional.Equals(null));
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenComparedWithNullThenTheyAreNotEqual()
+        {
+            var optional = Optional.Of(TestString);
+
+            Assert.IsFalse(optional.Equals(null));
+        }
     }
 
     interface ITestInterface
