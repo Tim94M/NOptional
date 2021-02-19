@@ -8,6 +8,7 @@ namespace NOptional
         T Value{ get; }
         IOptional<T> Filter(Predicate<T> filter);
         void IfPresent(Action<T> action);
+        void IfPresentOrElse(Action<T> presentAction, Action elseAction);
         T OrElse(T elseValue);
         T OrElseGet(Func<T> elseGenerator);
         T OrElseThrow(Func<Exception> p);

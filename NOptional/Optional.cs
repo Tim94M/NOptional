@@ -53,6 +53,17 @@ namespace NOptional
                 action(Value);
             }
         }
+        public void IfPresentOrElse(Action<T> presentAction, Action elseAction)
+        {
+            if (HasValue())
+            {
+                presentAction(Value);
+            }
+            else
+            {
+                elseAction();
+            }
+        }
 
         public T OrElse(T elseValue) => HasValue() ? Value : elseValue;
         public T OrElseGet(Func<T> elseGenerator) => HasValue() ? Value : elseGenerator();
@@ -60,5 +71,6 @@ namespace NOptional
 
         public IOptional<U> Map<U>(Func<T, U> mapper) => HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
         public IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper) => HasValue() ? mapper(Value) : Optional.Empty<U>();
+
     }
 }

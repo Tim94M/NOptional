@@ -214,6 +214,22 @@ namespace NOptional
         {
             Assert.ThrowsException<ArgumentNullException>( () => Optional.Of<ITestInterface>(null));
         }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingIfPresentOrElseElseActionIsExecuted()
+        {
+            var optional = Optional.Empty<string>();
+            optional.IfPresentOrElse(s => Assert.Fail(), () => Assert.IsTrue(true));
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingIfPresentOrElseThenPresentActionIsExecuted()
+        {
+            var optional = Optional.Of(TestString);
+
+            optional.IfPresentOrElse(s => Assert.IsTrue(true), () => Assert.Fail());
+        }
+
     }
 
     interface ITestInterface
