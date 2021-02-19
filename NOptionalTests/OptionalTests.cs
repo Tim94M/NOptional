@@ -241,8 +241,6 @@ namespace NOptional
             Assert.IsTrue(value.Filter(s => s.Equals(TestString)).HasValue());
         }
 
-
-
         [TestMethod]
         public void GivenFilledOptionalWhenCallingOrThenOrIsExecuted()
         {
@@ -254,6 +252,22 @@ namespace NOptional
             });
 
             Assert.IsTrue(value.Filter(s => s.Equals(TestString)).HasValue());
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingOrElseThrowThenInvalidOperationExceptionIsThrown()
+        {
+            var optional = Optional.Empty<string>();
+            Assert.ThrowsException<InvalidOperationException>(() => optional.OrElseThrow());
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingOrElseThrowThenValuesAreEqual()
+        {
+            var optional = Optional.Of(TestString);
+            var value = optional.OrElseThrow();
+
+            Assert.AreEqual(TestString, value);
         }
     }
 
