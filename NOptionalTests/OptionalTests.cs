@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections;
 using System.Linq;
 
 namespace NOptional
@@ -402,13 +403,31 @@ namespace NOptional
         [TestMethod]
         public void GivenEmptyOptionalWhenCallingGetEnumerableThenContainsNoElements()
         {
-            Assert.IsFalse(Optional.Empty<string>().Any());
+            Assert.IsFalse(Optional.Empty<string>().ToList().Any());
         }
 
         [TestMethod]
         public void GivenFilledOptionalWhenCallingGetEnumerableThenContainsOneElement()
         {
-            Assert.IsTrue(Optional.Of(TestString).Any());
+            Assert.IsTrue(Optional.Of(TestString).ToList().Any());
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingGetEnumeratorThenContainsNoElements()
+        {
+            var optional = Optional.Empty<string>();
+            IEnumerator enumerator = ((IEnumerable) optional).GetEnumerator();
+
+            Assert.IsFalse(enumerator.MoveNext());
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingGetEnumeratorThenContainsOneElement()
+        {
+            var optional = Optional.Of(TestString);
+            IEnumerator enumerator = ((IEnumerable)optional).GetEnumerator();
+
+            Assert.IsTrue(enumerator.MoveNext());
         }
 
         [TestMethod]
@@ -480,6 +499,12 @@ namespace NOptional
             var optional = Optional.Of(TestString);
 
             Assert.IsFalse(optional.Equals(null));
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptional()
+        {
+
         }
     }
 
