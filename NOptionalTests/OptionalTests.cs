@@ -282,6 +282,58 @@ namespace NOptional
         {
             Assert.IsTrue(Optional.Of(TestString).Any());
         }
+
+        [TestMethod]
+        public void GivenTwoFilledOptionalsWhenBothUseSameValueThenTheyAreEqual()
+        {
+            var optional = Optional.Of(TestString);
+            var optional2 = Optional.Of(TestString);
+            Assert.IsTrue(optional.Equals(optional2));
+            Assert.IsTrue(optional2.Equals(optional));
+        }
+
+        [TestMethod]
+        public void GivenOneFilledAndOneEmptyOptionalWhenComparingThenTheyAreNotEqual()
+        {
+            var optional = Optional.Of(TestString);
+            var optional2 = Optional.Empty<string>();
+            Assert.IsFalse(optional.Equals(optional2));
+            Assert.IsFalse(optional2.Equals(optional));
+        }
+
+        [TestMethod]
+        public void GivenTwoEmptyOptionalsWhenComparingThenTheyAreNotEqual()
+        {
+            var optional = Optional.Empty<string>();
+            var optional2 = Optional.Empty<string>();
+
+            Assert.IsFalse(optional.Equals(optional2));
+            Assert.IsFalse(optional2.Equals(optional));
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenComparingWithSelfThenTheyAreEqual()
+        {
+            var optional = Optional.Empty<string>();
+
+            Assert.IsTrue(optional.Equals(optional));
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCalculatingHashThenHashIsEqualToOriginalvalue()
+        {
+            var optional = Optional.Of(TestString);
+            Assert.AreEqual(TestString.GetHashCode(), optional.GetHashCode());
+        }
+
+        [TestMethod]
+        public void GivenTwoEmptyOptionalWhenCalculatingHashThenHashIsDifferent()
+        {
+            var optional = Optional.Empty<string>();
+            var optional2 = Optional.Empty<string>();
+
+            Assert.IsTrue(optional.GetHashCode() != optional2.GetHashCode());
+        }
     }
 
     interface ITestInterface
