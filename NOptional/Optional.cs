@@ -111,7 +111,12 @@ namespace NOptional
             return HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
         }
 
-        public IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper) => HasValue() ? mapper(Value) : Optional.Empty<U>();
+        public IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper)
+        {
+            CheckNullOrThrowException(mapper);
+
+            return HasValue() ? mapper(Value) : Optional.Empty<U>();
+        }
 
         public IEnumerator<T> GetEnumerator()
         {
