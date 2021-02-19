@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NOptional
 {
-    public interface IOptional<T>
+    public interface IOptional<T> : IEnumerable<T>
     {
         T Value { get; }
         bool HasValue();

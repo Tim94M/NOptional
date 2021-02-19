@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 namespace NOptional
 {
@@ -268,6 +269,18 @@ namespace NOptional
             var value = optional.OrElseThrow();
 
             Assert.AreEqual(TestString, value);
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingGetEnumerableThenContainsNoElements()
+        {
+            Assert.IsFalse(Optional.Empty<string>().Any());
+        }
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingGetEnumerableThenContainsOneElement()
+        {
+            Assert.IsTrue(Optional.Of(TestString).Any());
         }
     }
 
