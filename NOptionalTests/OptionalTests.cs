@@ -232,6 +232,29 @@ namespace NOptional
             optional.IfPresentOrElse(s => Assert.IsTrue(true), () => Assert.Fail());
         }
 
+        [TestMethod]
+        public void GivenEmptyOptionalWhenCallingOrThenOrIsExecuted()
+        {
+            var optional = Optional.Empty<string>();
+            var value = optional.Or(() => Optional.Of(TestString));
+
+            Assert.IsTrue(value.Filter(s => s.Equals(TestString)).HasValue());
+        }
+
+
+
+        [TestMethod]
+        public void GivenFilledOptionalWhenCallingOrThenOrIsExecuted()
+        {
+            var optional = Optional.Of(TestString);
+            var value = optional.Or(() =>
+            {
+                Assert.Fail();
+                return Optional.Empty<string>();
+            });
+
+            Assert.IsTrue(value.Filter(s => s.Equals(TestString)).HasValue());
+        }
     }
 
     interface ITestInterface
