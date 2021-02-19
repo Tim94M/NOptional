@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\MIT-License.txt">
+    <None Include="MIT-License.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
