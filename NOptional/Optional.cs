@@ -97,7 +97,12 @@ namespace NOptional
         }
 
         public T OrElseThrow() => HasValue() ? Value : throw new InvalidOperationException("Could not retrieve value because value was not set");
-        public T OrElseThrow(Func<Exception> exceptionGenerator) => HasValue() ? Value : throw exceptionGenerator();
+        public T OrElseThrow(Func<Exception> exceptionGenerator)
+        {
+            CheckNullOrThrowException(exceptionGenerator);
+
+            return HasValue() ? Value : throw exceptionGenerator();
+        }
 
         public IOptional<U> Map<U>(Func<T, U> mapper) => HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
         public IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper) => HasValue() ? mapper(Value) : Optional.Empty<U>();
