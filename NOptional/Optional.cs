@@ -88,7 +88,14 @@ namespace NOptional
         }
 
         public T OrElse(T elseValue) => HasValue() ? Value : elseValue;
-        public T OrElseGet(Func<T> elseGenerator) => HasValue() ? Value : elseGenerator();
+
+        public T OrElseGet(Func<T> elseGenerator)
+        {
+            CheckNullOrThrowException(elseGenerator);
+
+            return HasValue() ? Value : elseGenerator();
+        }
+
         public T OrElseThrow() => HasValue() ? Value : throw new InvalidOperationException("Could not retrieve value because value was not set");
         public T OrElseThrow(Func<Exception> exceptionGenerator) => HasValue() ? Value : throw exceptionGenerator();
 

@@ -135,6 +135,22 @@ namespace NOptional
         }
 
         [TestMethod]
+        public void GivenFilledOptionalWhenProvidingNullActionOnOrElseGetThenArgumentNullExceptionIsThrown()
+        {
+            var optional = Optional.Of(TestString);
+
+            Assert.ThrowsException<ArgumentNullException>(() => optional.OrElseGet(null));
+        }
+
+        [TestMethod]
+        public void GivenEmptyOptionalWhenProvidingNullActionOnOrElseGetThenArgumentNullExceptionIsThrown()
+        {
+            var optional = Optional.Empty<string>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => optional.OrElseGet(null));
+        }
+
+        [TestMethod]
         public void GivenEmptyOptionalThenThrowsInvalidOperationExceptionOnGet()
         {
             var optional = Optional.Empty<string>();
