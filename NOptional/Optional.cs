@@ -80,7 +80,12 @@ namespace NOptional
             }
         }
 
-        public IOptional<T> Or(Func<IOptional<T>> elseGenerator) => HasValue() ? Optional.Of(Value) : elseGenerator();
+        public IOptional<T> Or(Func<IOptional<T>> elseGenerator)
+        {
+            CheckNullOrThrowException(elseGenerator);
+
+            return HasValue() ? Optional.Of(Value) : elseGenerator();
+        }
 
         public T OrElse(T elseValue) => HasValue() ? Value : elseValue;
         public T OrElseGet(Func<T> elseGenerator) => HasValue() ? Value : elseGenerator();
