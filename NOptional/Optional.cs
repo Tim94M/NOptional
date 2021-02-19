@@ -88,5 +88,39 @@ namespace NOptional
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            return Equals((Optional<T>)obj);
+        }
+
+        public bool Equals(Optional<T> other)
+        {
+            if(HasValue() && other.HasValue())
+            {
+                return Value.Equals(other.Value);
+            }
+
+            if(!HasValue() && !other.HasValue())
+            {
+                return ReferenceEquals(this, other);
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            if (HasValue())
+            {
+                return Value.GetHashCode();
+            }
+            
+            return base.GetHashCode();
+        }
     }
 }
