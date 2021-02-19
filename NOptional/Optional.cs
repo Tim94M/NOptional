@@ -104,7 +104,13 @@ namespace NOptional
             return HasValue() ? Value : throw exceptionGenerator();
         }
 
-        public IOptional<U> Map<U>(Func<T, U> mapper) => HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
+        public IOptional<U> Map<U>(Func<T, U> mapper)
+        {
+            CheckNullOrThrowException(mapper);
+
+            return HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
+        }
+
         public IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper) => HasValue() ? mapper(Value) : Optional.Empty<U>();
 
         public IEnumerator<T> GetEnumerator()
