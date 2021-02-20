@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NOptional
 {
-    public interface IOptional<T> : IEnumerable<T>
+    public interface IOptional<T>
     {
         T Value { get; }
         bool HasValue();
@@ -22,5 +22,7 @@ namespace NOptional
         
         IOptional<U> Map<U>(Func<T, U> mapper);
         IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper);
+
+        IEnumerable<T> AsEnumerable();
     }
 }

@@ -403,31 +403,13 @@ namespace NOptional
         [TestMethod]
         public void GivenEmptyOptionalWhenCallingGetEnumerableThenContainsNoElements()
         {
-            Assert.IsFalse(Optional.Empty<string>().ToList().Any());
+            Assert.IsFalse(Optional.Empty<string>().AsEnumerable().ToList().Any());
         }
 
         [TestMethod]
         public void GivenFilledOptionalWhenCallingGetEnumerableThenContainsOneElement()
         {
-            Assert.IsTrue(Optional.Of(TestString).ToList().Any());
-        }
-
-        [TestMethod]
-        public void GivenEmptyOptionalWhenCallingGetEnumeratorThenContainsNoElements()
-        {
-            var optional = Optional.Empty<string>();
-            IEnumerator enumerator = ((IEnumerable) optional).GetEnumerator();
-
-            Assert.IsFalse(enumerator.MoveNext());
-        }
-
-        [TestMethod]
-        public void GivenFilledOptionalWhenCallingGetEnumeratorThenContainsOneElement()
-        {
-            var optional = Optional.Of(TestString);
-            IEnumerator enumerator = ((IEnumerable)optional).GetEnumerator();
-
-            Assert.IsTrue(enumerator.MoveNext());
+            Assert.IsTrue(Optional.Of(TestString).AsEnumerable().ToList().Any());
         }
 
         [TestMethod]

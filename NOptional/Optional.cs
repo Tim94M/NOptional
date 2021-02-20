@@ -113,15 +113,13 @@ namespace NOptional
             return HasValue() ? mapper(Value) : Optional.Empty<U>();
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerable<T> AsEnumerable()
         {
             if (HasValue())
             {
                 yield return Value;
             }
         }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private void CheckNullOrThrowException(object toCheck, [CallerMemberName] string parameterName = "") 
             => _ = toCheck ?? throw new ArgumentNullException(parameterName);
