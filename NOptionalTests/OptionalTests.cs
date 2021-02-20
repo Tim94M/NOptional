@@ -57,7 +57,7 @@ namespace NOptional
         public void GivenFilledOptionalWhenFilteringWithTrueFilterFilledObjectIsReturend()
         {
             var optional = Optional.Of(TestString);
-            var filtered = optional.Filter(s => !string.IsNullOrWhiteSpace(s));
+            var filtered = optional.IfApplies(s => !string.IsNullOrWhiteSpace(s));
 
             Assert.IsTrue(filtered.HasValue());
         }
@@ -66,7 +66,7 @@ namespace NOptional
         public void GivenEmptyOptionalWhenFilteringWithFalseFilterEmptyObjectIsReturend()
         {
             var optional = Optional.Of(TestString);
-            var filtered = optional.Filter(s => string.IsNullOrWhiteSpace(s));
+            var filtered = optional.IfApplies(s => string.IsNullOrWhiteSpace(s));
 
             Assert.IsFalse(filtered.HasValue());
         }
@@ -76,7 +76,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.Filter(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.IfApplies(null));
         }
 
         [TestMethod]
@@ -84,7 +84,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.Filter(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.IfApplies(null));
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.IfPresent(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.DoIfPresent(null));
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.IfPresent(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.DoIfPresent(null));
         }
 
         [TestMethod]
@@ -108,7 +108,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.IfPresentOrElse(null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.DoIfPresentOrElse(null, null));
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.IfPresentOrElse(null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.DoIfPresentOrElse(null, null));
         }
 
         [TestMethod]
@@ -124,7 +124,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.Or(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.OrElse((Func<IOptional<string>>)null));
         }
 
         [TestMethod]
@@ -132,7 +132,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.Or(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.OrElse((Func<IOptional<string>>)null));
         }
 
         [TestMethod]
@@ -140,7 +140,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.OrElseGet(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.GetValueOrElse((Func<string>)null));
         }
 
         [TestMethod]
@@ -148,7 +148,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.OrElseGet(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.GetValueOrElse((Func<string>)null));
         }
 
         [TestMethod]
@@ -156,7 +156,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.OrElseThrow(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.GetValueOrElseThrow(null));
         }
 
         [TestMethod]
@@ -164,7 +164,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.OrElseThrow(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.GetValueOrElseThrow(null));
         }
 
         [TestMethod]
@@ -172,7 +172,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.Map<string>(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.MapValue<string>(null));
         }
 
         [TestMethod]
@@ -180,7 +180,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.Map<string>(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.MapValue<string>(null));
         }
 
         [TestMethod]
@@ -188,7 +188,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.FlatMap<string>(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.FlatMapValue<string>(null));
         }
 
         [TestMethod]
@@ -196,7 +196,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => optional.FlatMap<string>(null));
+            Assert.ThrowsException<ArgumentNullException>(() => optional.FlatMapValue<string>(null));
         }
 
         [TestMethod]
@@ -211,7 +211,7 @@ namespace NOptional
         public void GivenEmptyOptionalThenDoesNothingOnPreset()
         {
             var optional = Optional.Empty<string>();
-            optional.IfPresent(s => Assert.Fail());
+            optional.DoIfPresent(s => Assert.Fail());
 
             Assert.IsTrue(true);
         }
@@ -221,7 +221,7 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
             var called = false;
-            optional.IfPresent(s => called = true);
+            optional.DoIfPresent(s => called = true);
 
             Assert.IsTrue(called);
         }
@@ -230,7 +230,7 @@ namespace NOptional
         public void GivenEmptyOptionalThenSuppliedValueIsUsed()
         {
             var optional = Optional.Empty<string>();
-            var value = optional.OrElse(TestString);
+            var value = optional.GetValueOrElse(TestString);
 
             Assert.AreEqual(TestString, value);
         }
@@ -239,7 +239,7 @@ namespace NOptional
         public void GivenFilledOptionalThenSuppliedValueIsUnused()
         {
             var optional = Optional.Of(TestString);
-            var value = optional.OrElse("other");
+            var value = optional.GetValueOrElse("other");
 
             Assert.AreNotEqual("other", value);
         }
@@ -248,7 +248,7 @@ namespace NOptional
         public void GivenEmptyOptionalThenFunctionCreatesValue()
         {
             var optional = Optional.Empty<string>();
-            var value = optional.OrElseGet(() => TestString);
+            var value = optional.GetValueOrElse(() => TestString);
 
             Assert.AreEqual(TestString, value);
         }
@@ -257,7 +257,7 @@ namespace NOptional
         public void GivenFilledOptionalThenFunctionIsNotCalled()
         {
             var optional = Optional.Of(TestString);
-            var value = optional.OrElseGet(() =>
+            var value = optional.GetValueOrElse(() =>
             {
                 Assert.Fail();
                 return string.Empty;
@@ -271,14 +271,14 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
 
-            Assert.ThrowsException<Exception>(() => optional.OrElseThrow(() => new Exception()));
+            Assert.ThrowsException<Exception>(() => optional.GetValueOrElseThrow(() => new Exception()));
         }
 
         [TestMethod]
         public void GivenFilledOptionalThenReturnsValue()
         {
             var optional = Optional.Of(TestString);
-            var value = optional.OrElseThrow(() =>
+            var value = optional.GetValueOrElseThrow(() =>
             {
                 Assert.Fail();
                 return new Exception();
@@ -291,7 +291,7 @@ namespace NOptional
         public void GivenEmptyOptionalWhenMappingThenEmptyOptionalIsReturned()
         {
             var optional = Optional.Empty<string>();
-            var enumeratorOptional = optional.Map(s =>
+            var enumeratorOptional = optional.MapValue(s =>
             {
                 Assert.Fail();
                 return s.GetEnumerator();
@@ -304,7 +304,7 @@ namespace NOptional
         public void GivenFilledOptionalWhenMappingThenMappedOptionalIsReturned()
         {
             var optional = Optional.Of(TestString);
-            var enumeratorOptional = optional.Map(s => s.GetEnumerator());
+            var enumeratorOptional = optional.MapValue(s => s.GetEnumerator());
 
             Assert.IsTrue(enumeratorOptional.HasValue());
         }
@@ -313,7 +313,7 @@ namespace NOptional
         public void GivenEmptyOptionalWhenFlatMappingThenEmptyOptionalIsReturned()
         {
             var optional = Optional.Empty<string>();
-            var enumeratorOptional = optional.FlatMap(s =>
+            var enumeratorOptional = optional.FlatMapValue(s =>
             {
                 Assert.Fail();
                 return Optional.Of(s.GetEnumerator());
@@ -326,7 +326,7 @@ namespace NOptional
         public void GivenFilledOptionalWhenFlatMappingThenMappedOptionalIsReturned()
         {
             var optional = Optional.Of(TestString);
-            var enumeratorOptional = optional.FlatMap(s => Optional.Of(s.GetEnumerator()));
+            var enumeratorOptional = optional.FlatMapValue(s => Optional.Of(s.GetEnumerator()));
 
             Assert.IsTrue(enumeratorOptional.HasValue());
         }
@@ -350,7 +350,7 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
             
-            optional.IfPresentOrElse(s => Assert.Fail(), () => Assert.IsTrue(true));
+            optional.DoIfPresentOrElse(s => Assert.Fail(), () => Assert.IsTrue(true));
         }
 
         [TestMethod]
@@ -358,29 +358,29 @@ namespace NOptional
         {
             var optional = Optional.Of(TestString);
 
-            optional.IfPresentOrElse(s => Assert.IsTrue(true), () => Assert.Fail());
+            optional.DoIfPresentOrElse(s => Assert.IsTrue(true), () => Assert.Fail());
         }
 
         [TestMethod]
         public void GivenEmptyOptionalWhenCallingOrThenOrIsExecuted()
         {
             var optional = Optional.Empty<string>();
-            var value = optional.Or(() => Optional.Of(TestString));
+            var value = optional.OrElse(() => Optional.Of(TestString));
 
-            Assert.IsTrue(value.Filter(s => s.Equals(TestString)).HasValue());
+            Assert.IsTrue(value.IfApplies(s => s.Equals(TestString)).HasValue());
         }
 
         [TestMethod]
         public void GivenFilledOptionalWhenCallingOrThenOrIsExecuted()
         {
             var optional = Optional.Of(TestString);
-            var value = optional.Or(() =>
+            var value = optional.OrElse(() =>
             {
                 Assert.Fail();
                 return Optional.Empty<string>();
             });
 
-            Assert.IsTrue(value.Filter(s => s.Equals(TestString)).HasValue());
+            Assert.IsTrue(value.IfApplies(s => s.Equals(TestString)).HasValue());
         }
 
         [TestMethod]
@@ -388,14 +388,14 @@ namespace NOptional
         {
             var optional = Optional.Empty<string>();
             
-            Assert.ThrowsException<InvalidOperationException>(() => optional.OrElseThrow());
+            Assert.ThrowsException<InvalidOperationException>(() => optional.GetValueOrElseThrow());
         }
 
         [TestMethod]
         public void GivenFilledOptionalWhenCallingOrElseThrowThenValuesAreEqual()
         {
             var optional = Optional.Of(TestString);
-            var value = optional.OrElseThrow();
+            var value = optional.GetValueOrElseThrow();
 
             Assert.AreEqual(TestString, value);
         }
@@ -403,31 +403,13 @@ namespace NOptional
         [TestMethod]
         public void GivenEmptyOptionalWhenCallingGetEnumerableThenContainsNoElements()
         {
-            Assert.IsFalse(Optional.Empty<string>().ToList().Any());
+            Assert.IsFalse(Optional.Empty<string>().AsEnumerable().ToList().Any());
         }
 
         [TestMethod]
         public void GivenFilledOptionalWhenCallingGetEnumerableThenContainsOneElement()
         {
-            Assert.IsTrue(Optional.Of(TestString).ToList().Any());
-        }
-
-        [TestMethod]
-        public void GivenEmptyOptionalWhenCallingGetEnumeratorThenContainsNoElements()
-        {
-            var optional = Optional.Empty<string>();
-            IEnumerator enumerator = ((IEnumerable) optional).GetEnumerator();
-
-            Assert.IsFalse(enumerator.MoveNext());
-        }
-
-        [TestMethod]
-        public void GivenFilledOptionalWhenCallingGetEnumeratorThenContainsOneElement()
-        {
-            var optional = Optional.Of(TestString);
-            IEnumerator enumerator = ((IEnumerable)optional).GetEnumerator();
-
-            Assert.IsTrue(enumerator.MoveNext());
+            Assert.IsTrue(Optional.Of(TestString).AsEnumerable().ToList().Any());
         }
 
         [TestMethod]
@@ -451,20 +433,19 @@ namespace NOptional
         }
 
         [TestMethod]
-        public void GivenTwoEmptyOptionalsWhenComparingThenTheyAreNotEqual()
+        public void GivenTwoEmptyOptionalsWhenComparingThenTheyAreEqual()
         {
             var optional = Optional.Empty<string>();
             var optional2 = Optional.Empty<string>();
 
-            Assert.IsFalse(optional.Equals(optional2));
-            Assert.IsFalse(optional2.Equals(optional));
+            Assert.IsTrue(optional.Equals(optional2));
+            Assert.IsTrue(optional2.Equals(optional));
         }
 
         [TestMethod]
         public void GivenEmptyOptionalWhenComparingWithSelfThenTheyAreEqual()
         {
             var optional = Optional.Empty<string>();
-
             Assert.IsTrue(optional.Equals(optional));
         }
 
@@ -477,12 +458,12 @@ namespace NOptional
         }
 
         [TestMethod]
-        public void GivenTwoEmptyOptionalWhenCalculatingHashThenHashIsDifferent()
+        public void GivenTwoEmptyOptionalWhenCalculatingHashThenHashIsEqual()
         {
             var optional = Optional.Empty<string>();
             var optional2 = Optional.Empty<string>();
 
-            Assert.IsTrue(optional.GetHashCode() != optional2.GetHashCode());
+            Assert.IsTrue(optional.GetHashCode() == optional2.GetHashCode());
         }
 
         [TestMethod]
@@ -502,9 +483,12 @@ namespace NOptional
         }
 
         [TestMethod]
-        public void GivenEmptyOptional()
+        public void GivenNullableIntWithNullValueWhenUsingOptionalOfNullableThenEmptyOoptionalIsReturned()
         {
+            int? nullableInt = null;
+            var optionalOfNullableInt = Optional.OfNullable(nullableInt);
 
+            Assert.IsTrue(optionalOfNullableInt.IsEmpty());
         }
     }
 

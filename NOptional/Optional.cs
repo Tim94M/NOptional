@@ -12,10 +12,13 @@ namespace NOptional
         public static IOptional<T> OfNullable<T>(T value) => value == null ? new Optional<T>() : new Optional<T>(value);
     }
 
-    public class Optional<T> : IOptional<T>
+    /// <inheritdoc/>
+    internal struct Optional<T> : IOptional<T>
     {
         private readonly bool hasValue;
         private readonly T value;
+
+        /// <inheritdoc/>
         public T Value
         {
             get
@@ -29,11 +32,11 @@ namespace NOptional
             }
         }
 
-        internal Optional()
-        {
-            hasValue = false;
-        }
-
+        /// <summary>
+        /// Creates an new filled instance with the provided <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value for this instance.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="value"/> is null.</exception>
         internal Optional(T value)
         {
             if(value == null)
@@ -45,17 +48,21 @@ namespace NOptional
             hasValue = true;
         }
 
+        /// <inheritdoc/>
         public bool HasValue() => hasValue;
+        /// <inheritdoc/>
         public bool IsEmpty() => !HasValue();
 
-        public IOptional<T> Filter(Predicate<T> filter)
+        /// <inheritdoc/>
+        public IOptional<T> IfApplies(Predicate<T> filter)
         {
             CheckNullOrThrowException(filter);
 
             return HasValue() && filter(Value) ? Optional.Of(Value) : Optional.Empty<T>();
         }
 
-        public void IfPresent(Action<T> action)
+        /// <inheritdoc/>
+        public void DoIfPresent(Action<T> action)
         {
             CheckNullOrThrowException(action);
 
@@ -65,7 +72,8 @@ namespace NOptional
             }
         }
 
-        public void IfPresentOrElse(Action<T> presentAction, Action elseAction)
+        /// <inheritdoc/>
+        public void DoIfPresentOrElse(Action<T> presentAction, Action elseAction)
         {
             CheckNullOrThrowException(presentAction);
             CheckNullOrThrowException(elseAction);
@@ -80,45 +88,54 @@ namespace NOptional
             }
         }
 
-        public IOptional<T> Or(Func<IOptional<T>> elseGenerator)
+        /// <inheritdoc/>
+        public IOptional<T> OrElse(Func<IOptional<T>> elseGenerator)
         {
             CheckNullOrThrowException(elseGenerator);
 
             return HasValue() ? Optional.Of(Value) : elseGenerator();
         }
 
-        public T OrElse(T elseValue) => HasValue() ? Value : elseValue;
+        /// <inheritdoc/>
+        public T GetValueOrElse(T elseValue) => HasValue() ? Value : elseValue;
 
-        public T OrElseGet(Func<T> elseGenerator)
+        /// <inheritdoc/>
+        public T GetValueOrElse(Func<T> elseGenerator)
         {
             CheckNullOrThrowException(elseGenerator);
 
             return HasValue() ? Value : elseGenerator();
         }
 
-        public T OrElseThrow() => HasValue() ? Value : throw new InvalidOperationException("Could not retrieve value because value was not set");
-        public T OrElseThrow(Func<Exception> exceptionGenerator)
+        /// <inheritdoc/>
+        public T GetValueOrElseThrow() => HasValue() ? Value : throw new InvalidOperationException("Could not retrieve value because value was not set");
+
+        /// <inheritdoc/>
+        public T GetValueOrElseThrow(Func<Exception> exceptionGenerator)
         {
             CheckNullOrThrowException(exceptionGenerator);
 
             return HasValue() ? Value : throw exceptionGenerator();
         }
 
-        public IOptional<U> Map<U>(Func<T, U> mapper)
+        /// <inheritdoc/>
+        public IOptional<U> MapValue<U>(Func<T, U> mapper)
         {
             CheckNullOrThrowException(mapper);
 
             return HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
         }
 
-        public IOptional<U> FlatMap<U>(Func<T, IOptional<U>> mapper)
+        /// <inheritdoc/>
+        public IOptional<U> FlatMapValue<U>(Func<T, IOptional<U>> mapper)
         {
             CheckNullOrThrowException(mapper);
 
             return HasValue() ? mapper(Value) : Optional.Empty<U>();
         }
 
-        public IEnumerator<T> GetEnumerator()
+        /// <inheritdoc/>
+        public IEnumerable<T> AsEnumerable()
         {
             if (HasValue())
             {
@@ -126,11 +143,16 @@ namespace NOptional
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
+        /// <summary>
+        /// Checks the provided <paramref name="toCheck"/> for <see langword="null"/>.
+        /// </summary>
+        /// <param name="toCheck">The object to check for null</param>
+        /// <param name="parameterName">The name of the parameter to be included in the exception message.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="toCheck"/> is null.</exception>
         private void CheckNullOrThrowException(object toCheck, [CallerMemberName] string parameterName = "") 
             => _ = toCheck ?? throw new ArgumentNullException(parameterName);
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
@@ -147,12 +169,11 @@ namespace NOptional
                 return Value.Equals(other.Value);
             }
 
-            if(!HasValue() && !other.HasValue())
-            {
-                return ReferenceEquals(this, other);
-            }
-
-            return false;
+            // since Optional is a struct, ReferenceEquals would always result in inequality, 
+            // even if we would compare with self, because the struct is boxed into an new object 
+            // before performing the actual reference check.
+            // see: https://docs.microsoft.com/en-us/dotnet/api/system.object.referenceequals?view=net-5.0#remarks
+            return !HasValue() && !other.HasValue();
         }
 
         public override int GetHashCode()
@@ -161,8 +182,10 @@ namespace NOptional
             {
                 return Value.GetHashCode();
             }
-            
-            return base.GetHashCode();
+
+            // this effectively means, that in a hash-based collection, there can always only 
+            // be one empty Optional of the specified type
+            return hasValue.GetHashCode();
         }
     }
 }
