@@ -451,20 +451,19 @@ namespace NOptional
         }
 
         [TestMethod]
-        public void GivenTwoEmptyOptionalsWhenComparingThenTheyAreNotEqual()
+        public void GivenTwoEmptyOptionalsWhenComparingThenTheyAreEqual()
         {
             var optional = Optional.Empty<string>();
             var optional2 = Optional.Empty<string>();
 
-            Assert.IsFalse(optional.Equals(optional2));
-            Assert.IsFalse(optional2.Equals(optional));
+            Assert.IsTrue(optional.Equals(optional2));
+            Assert.IsTrue(optional2.Equals(optional));
         }
 
         [TestMethod]
         public void GivenEmptyOptionalWhenComparingWithSelfThenTheyAreEqual()
         {
             var optional = Optional.Empty<string>();
-
             Assert.IsTrue(optional.Equals(optional));
         }
 
@@ -477,12 +476,12 @@ namespace NOptional
         }
 
         [TestMethod]
-        public void GivenTwoEmptyOptionalWhenCalculatingHashThenHashIsDifferent()
+        public void GivenTwoEmptyOptionalWhenCalculatingHashThenHashIsEqual()
         {
             var optional = Optional.Empty<string>();
             var optional2 = Optional.Empty<string>();
 
-            Assert.IsTrue(optional.GetHashCode() != optional2.GetHashCode());
+            Assert.IsTrue(optional.GetHashCode() == optional2.GetHashCode());
         }
 
         [TestMethod]

@@ -12,7 +12,7 @@ namespace NOptional
         public static IOptional<T> OfNullable<T>(T value) => value == null ? new Optional<T>() : new Optional<T>(value);
     }
 
-    public class Optional<T> : IOptional<T>
+    internal struct Optional<T> : IOptional<T>
     {
         private readonly bool hasValue;
         private readonly T value;
@@ -27,11 +27,6 @@ namespace NOptional
 
                 return value;
             }
-        }
-
-        internal Optional()
-        {
-            hasValue = false;
         }
 
         internal Optional(T value)
@@ -147,12 +142,11 @@ namespace NOptional
                 return Value.Equals(other.Value);
             }
 
-            if(!HasValue() && !other.HasValue())
-            {
-                return ReferenceEquals(this, other);
-            }
-
-            return false;
+            // since Optional is a struct, ReferenceEquals would always result in inequality, 
+            // even if we would compare with self, because the struct is boxed into an new object 
+            // before performing the actual reference check.
+            // see: https://docs.microsoft.com/en-us/dotnet/api/system.object.referenceequals?view=net-5.0#remarks
+            return !HasValue() && !other.HasValue();
         }
 
         public override int GetHashCode()
@@ -161,8 +155,10 @@ namespace NOptional
             {
                 return Value.GetHashCode();
             }
-            
-            return base.GetHashCode();
+
+            // this effectively means, that in a hash-based collection, there can always only 
+            // be one empty Optional of the specified type
+            return hasValue.GetHashCode();
         }
     }
 }
