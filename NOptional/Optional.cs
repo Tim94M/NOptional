@@ -12,10 +12,13 @@ namespace NOptional
         public static IOptional<T> OfNullable<T>(T value) => value == null ? new Optional<T>() : new Optional<T>(value);
     }
 
+    /// <inheritdoc/>
     internal struct Optional<T> : IOptional<T>
     {
         private readonly bool hasValue;
         private readonly T value;
+
+        /// <inheritdoc/>
         public T Value
         {
             get
@@ -29,6 +32,11 @@ namespace NOptional
             }
         }
 
+        /// <summary>
+        /// Creates an new filled instance with the provided <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value for this instance.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="value"/> is null.</exception>
         internal Optional(T value)
         {
             if(value == null)
@@ -40,9 +48,12 @@ namespace NOptional
             hasValue = true;
         }
 
+        /// <inheritdoc/>
         public bool HasValue() => hasValue;
+        /// <inheritdoc/>
         public bool IsEmpty() => !HasValue();
 
+        /// <inheritdoc/>
         public IOptional<T> IfApplies(Predicate<T> filter)
         {
             CheckNullOrThrowException(filter);
@@ -50,6 +61,7 @@ namespace NOptional
             return HasValue() && filter(Value) ? Optional.Of(Value) : Optional.Empty<T>();
         }
 
+        /// <inheritdoc/>
         public void DoIfPresent(Action<T> action)
         {
             CheckNullOrThrowException(action);
@@ -60,6 +72,7 @@ namespace NOptional
             }
         }
 
+        /// <inheritdoc/>
         public void DoIfPresentOrElse(Action<T> presentAction, Action elseAction)
         {
             CheckNullOrThrowException(presentAction);
@@ -75,15 +88,18 @@ namespace NOptional
             }
         }
 
-        public IOptional<T> GetValueOrElse(Func<IOptional<T>> elseGenerator)
+        /// <inheritdoc/>
+        public IOptional<T> OrElse(Func<IOptional<T>> elseGenerator)
         {
             CheckNullOrThrowException(elseGenerator);
 
             return HasValue() ? Optional.Of(Value) : elseGenerator();
         }
 
+        /// <inheritdoc/>
         public T GetValueOrElse(T elseValue) => HasValue() ? Value : elseValue;
 
+        /// <inheritdoc/>
         public T GetValueOrElse(Func<T> elseGenerator)
         {
             CheckNullOrThrowException(elseGenerator);
@@ -91,7 +107,10 @@ namespace NOptional
             return HasValue() ? Value : elseGenerator();
         }
 
+        /// <inheritdoc/>
         public T GetValueOrElseThrow() => HasValue() ? Value : throw new InvalidOperationException("Could not retrieve value because value was not set");
+
+        /// <inheritdoc/>
         public T GetValueOrElseThrow(Func<Exception> exceptionGenerator)
         {
             CheckNullOrThrowException(exceptionGenerator);
@@ -99,6 +118,7 @@ namespace NOptional
             return HasValue() ? Value : throw exceptionGenerator();
         }
 
+        /// <inheritdoc/>
         public IOptional<U> MapValue<U>(Func<T, U> mapper)
         {
             CheckNullOrThrowException(mapper);
@@ -106,6 +126,7 @@ namespace NOptional
             return HasValue() ? Optional.OfNullable(mapper(Value)) : Optional.Empty<U>();
         }
 
+        /// <inheritdoc/>
         public IOptional<U> FlatMapValue<U>(Func<T, IOptional<U>> mapper)
         {
             CheckNullOrThrowException(mapper);
@@ -113,6 +134,7 @@ namespace NOptional
             return HasValue() ? mapper(Value) : Optional.Empty<U>();
         }
 
+        /// <inheritdoc/>
         public IEnumerable<T> AsEnumerable()
         {
             if (HasValue())
@@ -121,9 +143,16 @@ namespace NOptional
             }
         }
 
+        /// <summary>
+        /// Checks the provided <paramref name="toCheck"/> for <see langword="null"/>.
+        /// </summary>
+        /// <param name="toCheck">The object to check for null</param>
+        /// <param name="parameterName">The name of the parameter to be included in the exception message.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="toCheck"/> is null.</exception>
         private void CheckNullOrThrowException(object toCheck, [CallerMemberName] string parameterName = "") 
             => _ = toCheck ?? throw new ArgumentNullException(parameterName);
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
