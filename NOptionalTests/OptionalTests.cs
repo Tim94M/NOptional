@@ -501,9 +501,12 @@ namespace NOptional
         }
 
         [TestMethod]
-        public void GivenEmptyOptional()
+        public void GivenNullableIntWithNullValueWhenUsingOptionalOfNullableThenEmptyOoptionalIsReturned()
         {
+            int? nullableInt = null;
+            var optionalOfNullableInt = Optional.OfNullable(nullableInt);
 
+            Assert.IsTrue(optionalOfNullableInt.IsEmpty());
         }
     }
 
